@@ -18,7 +18,6 @@
             text-align: center;
             color: white;
             font-size: 40px;
-
         }
         td{
             text-align: center;
@@ -37,11 +36,24 @@
         tr{
             border: 1px white solid;
         }
+        #control{
+            padding-top: 70vh;
+            text-align: center;
+            color: white;
+            position: absolute;
+        }
+
+
+        @keyframes dash {
+          to {
+            stroke-dashoffset: 0;
+          }
+        }
     </style>
 </head>
 <body>
 <div id="title" style="color: white"> 税务虚开群组检测系统</div>
-<div>
+<div id="control" style="color: white">
     <table>
         <thead> <tr><th colspan="2">控制面板</th></tr></thead>
         <tr>
@@ -125,27 +137,31 @@
     var color = d3.scale.category20();
 
     //绘制连线
+    // stroke-dasharray: 1000;
+      //        stroke-dashoffset: 800;
+        //      animation: dash 5s linear infinite;
     var lines = svg.selectAll(".forceLine")
         .data(edges)
         .enter()
         .append("line")
         .attr("class", "forceLine")
-        .style("stroke", function (d, i) {
-            return color("red");
-        });
+        .style({"stroke": function () {
+            return "white";
+        },"stroke-dasharray":"10","stroke-dashoffset":"100","animation":"dash 2s linear infinite"});
 
     var circles = svg.selectAll(".forceCircle")
         .data(nodes)
         .enter()
         .append("circle")
         .attr("class", "forceCircle")
-        .attr("r", 20)
+        .attr("r", 10)
         .style("fill", function (d, i) {
             return color(i);
         })
         .call(force.drag)
         .on("mouseover",function (d) {
             console.log(d.x,d.y)
+
              var g = svg.append("g")
                 g.append("rect")
                 .attr("class", "mouseRect")
@@ -171,7 +187,7 @@
                 .attr("dy",".3em")
                 .attr("font-size", "2em")
                 .attr("color", "black")
-                .text(function(){ return d.name;});
+                .text(function(){ return d.name;})
         })
         .on("mouseout",function (d) {
             $(".mouseRect").remove();
@@ -202,10 +218,8 @@
         circles.attr("cy", function (d) {
             return d.y;
         })
-
-
-
     })
+
 
 
 
