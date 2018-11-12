@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>force_layout</title>
+    <link href="../dependences/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="../dependences/bootstrap/bootstrap-theme.css" rel="stylesheet">
+    <script src="../dependences/jquery/jquery-1.10.2.min.js"></script>
+    <script src="../dependences/bootstrap/bootstrap.min.js"></script>
+    <script src="../dependences/d3/d3.v3.min.js"></script>
+    <style>
+        body {
+            background-color: black;
+        }
+
+        #title {
+            padding-top: 10px;
+            text-align: center;
+            color: white;
+            font-size: 40px;
+
+        }
+        td{
+            text-align: center;
+            color: white;
+            padding: 10px 10px;
+            font-size: 10px;
+        }
+        th{
+            text-align: center;
+            color: white;
+            font-size: 20px;
+        }
+        input{
+            width:50px
+        }
+    </style>
+</head>
+<body>
+<div id="title" style="color: white"> 税务虚开群组检测系统</div>
+<div>
+    <table>
+        <thead> <tr><th colspan="2">控制面板</th></tr></thead>
+        <tr>
+            <td>缩放</td>
+            <td><input type="range" min="1" max="3" step="0.1" onchange="slided()" id="range" value="2"/></td>
+        </tr>
+    </table>
+</div>
+<script>
+
+    console.log($("#range").val())
+
+    function zoomed() {
+        d3.select(".svg-container").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + "," + d3.event.scale + ")")
+            .attr("transform-origin", "50% 50%");
+        $("#range").prop("value", d3.event.scale);
+    }
+
+
+    function slided(d) {
+        console.log($("#range").val())
+        zoom.scale($("#range").val())
+            .event(svg);
+    }
+
+    //缩放控件
+    var zoom = d3.behavior.zoom()
+        .scaleExtent([1, 3])
+        .on("zoom", zoomed);
+
+    //设定总宽度和高度
+    var width = window.screen.availWidth - 30;
+    var height = 750;
+
+    //首先准备原始数据
+    var nodes = [
+        {name: "0"},
+        {name: "1"},
+        {name: "2"},
+        {name: "3"},
+        {name: "4"},
+        {name: "5"},
+        {name: "6"}
+    ]
+    var edges = [
+        {source: 0, target: 1},
+        {source: 0, target: 2},
+        {source: 0, target: 3},
+        {source: 1, target: 4},
+        {source: 1, target: 5},
+        {source: 1, target: 6}
+    ]
+
+
+    //创建画布
+    var svg = d3.select("body")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("class", "svg-container")
+        .call(zoom);
+
+    //根据布局转换数据
+    var force = d3.layout.force()
+        .nodes(nodes)
+        .links(edges)
+        .size([width, height])
+        .linkDistance(90)
+        .charge(-400);
+
+    force.start();
+
+    console.log(nodes);
+    console.log(edges);
+
+    //开始绘制
+    var color = d3.scale.category20();
+
+    //绘制连线
+    var lines = svg.selectAll(".forceLine")
+        .data(edges)
+        .enter()
+        .append("line")
+        .attr("class", "forceLine")
+        .style("stroke", function (d, i) {
+            return color("red");
+        });
+
+    var circles = svg.selectAll(".forceCircle")
+        .data(nodes)
+        .enter()
+        .append("circle")
+        .attr("class", "forceCircle")
+        .attr("r", 20)
+        .style("fill", function (d, i) {
+            return color(i);
+        })
+        .call(force.drag)
+
+
+    // d3.selectAll(".forceCircle")
+    //   .on("click", function () {
+    //     console.log("run here ")
+    //   d3.select(this)
+    //     .text("Thank you");
+    // })
+    var texts = svg.selectAll(".forceText")
+        .data(nodes)
+        .enter()
+        .append("text")
+        .attr("class", "forceText")
+        .attr("x", function (d) {
+            return d.x;
+        })
+        .attr("y", function (d) {
+            return d.y;
+        })
+        .attr("dy", ".3em")
+        .text(function (d) {
+            return d.name;
+        })
+        .on("mouseover", function (d) {
+            d3.select(this)
+                .text(function () {
+                    return "mouseOver"
+                })
+        })
+        .on("mouseout", function (d) {
+            d3.select(this)
+                .text(function (d) {
+                    return d.name;
+                })
+        })//允许拖动
+
+
+    force.on("tick", function () {
+        lines.attr("x1", function (d) {
+            return d.source.x;
+        })
+        lines.attr("y1", function (d) {
+            return d.source.y;
+        })
+        lines.attr("x2", function (d) {
+            return d.target.x;
+        })
+        lines.attr("y2", function (d) {
+            return d.target.y;
+        })
+
+        circles.attr("cx", function (d) {
+            return d.x;
+        })
+        circles.attr("cy", function (d) {
+            return d.y;
+        })
+
+        texts.attr("x", function (d) {
+            return d.x;
+        })
+        texts.attr("y", function (d) {
+            return d.y;
+        })
+
+    })
+
+    // var drag = force.drag()
+    //   .on("dragstart", function (d) {
+    //     d.fixed = true;
+    // })
+    //.on("dragend", function (d, i) {
+    //   d3.select(this).style("fill", color(i));
+    //})
+    //.on("drag", function (d) {
+    //   d3.select(this).style("fill", "yellow");
+    //})
+
+
+</script>
+</body>
+</html>
