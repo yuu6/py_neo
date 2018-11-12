@@ -34,6 +34,9 @@
         input{
             width:50px
         }
+        tr{
+            border: 1px white solid;
+        }
     </style>
 </head>
 <body>
@@ -44,6 +47,9 @@
         <tr>
             <td>缩放</td>
             <td><input type="range" min="1" max="3" step="0.1" onchange="slided()" id="range" value="2"/></td>
+        </tr>
+         <tr>
+             <td colspan="2"><button style="color: black">检测</button></td>
         </tr>
     </table>
 </div>
@@ -151,7 +157,8 @@
                 })
                 .attr("height", "50")
                 .attr("width","100")
-                .style("fill","white")
+                .style("fill", d3.rgb(174, 199, 232))
+                    .style("opacity", .5)
 
             g.append("text")
                 .attr("class","mouseText")
@@ -172,27 +179,6 @@
         })
 
 
-    // d3.selectAll(".forceCircle")
-    //   .on("click", function () {
-    //     console.log("run here ")
-    //   d3.select(this)
-    //     .text("Thank you");
-    // })
-    var texts = svg.selectAll(".forceText")
-        .data(nodes)
-        .enter()
-        .append("text")
-        .attr("class", "forceText")
-        .attr("x", function (d) {
-            return d.x;
-        })
-        .attr("y", function (d) {
-            return d.y;
-        })
-        .attr("dy", ".3em")
-        .text(function (d) {
-            return d.name;
-        })
 
 
 
@@ -217,12 +203,7 @@
             return d.y;
         })
 
-        texts.attr("x", function (d) {
-            return d.x;
-        })
-        texts.attr("y", function (d) {
-            return d.y;
-        })
+
 
     })
 
