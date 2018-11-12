@@ -138,6 +138,38 @@
             return color(i);
         })
         .call(force.drag)
+        .on("mouseover",function (d) {
+            console.log(d.x,d.y)
+             var g = svg.append("g")
+                g.append("rect")
+                .attr("class", "mouseRect")
+                .attr("x", function () {
+                    return d.x-50;
+                })
+                .attr("y", function () {
+                    return d.y+30;
+                })
+                .attr("height", "50")
+                .attr("width","100")
+                .style("fill","white")
+
+            g.append("text")
+                .attr("class","mouseText")
+                .attr("x", function () {
+                    return d.x-50;
+                })
+                .attr("y", function () {
+                    return d.y+40;
+                })
+                .attr("dy",".3em")
+                .attr("font-size", "2em")
+                .attr("color", "black")
+                .text(function(){ return d.name;});
+        })
+        .on("mouseout",function (d) {
+            $(".mouseRect").remove();
+            $(".mouseText").remove();
+        })
 
 
     // d3.selectAll(".forceCircle")
@@ -161,18 +193,7 @@
         .text(function (d) {
             return d.name;
         })
-        .on("mouseover", function (d) {
-            d3.select(this)
-                .text(function () {
-                    return "mouseOver"
-                })
-        })
-        .on("mouseout", function (d) {
-            d3.select(this)
-                .text(function (d) {
-                    return d.name;
-                })
-        })//允许拖动
+
 
 
     force.on("tick", function () {
@@ -205,16 +226,7 @@
 
     })
 
-    // var drag = force.drag()
-    //   .on("dragstart", function (d) {
-    //     d.fixed = true;
-    // })
-    //.on("dragend", function (d, i) {
-    //   d3.select(this).style("fill", color(i));
-    //})
-    //.on("drag", function (d) {
-    //   d3.select(this).style("fill", "yellow");
-    //})
+
 
 
 </script>
